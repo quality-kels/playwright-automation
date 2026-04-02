@@ -1,31 +1,33 @@
 const { test, expect } = require("@playwright/test");
+const LoginPage = require("../pages/LoginPage");
+const InventoryPage = require("../pages/InventoryPage");
 
 test.describe("Inventory", () => {
+  let loginPage;
+  let inventoryPage;
+
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
-    await page.getByRole("textbox", { name: "Username" }).fill("standard_user");
-    await page.getByRole("textbox", { name: "Password" }).fill("secret_sauce");
-    await page.getByRole("button", { name: "Login" }).click();
-    // explicit nav wait
-    await page.waitForURL(/inventory/);
+    loginPage = new LoginPage(page);
+    inventoryPage = new InventoryPage(page);
+    await loginPage.visit();
+    await loginPage.login("standard_user", "secret_sauce");
+    await inventoryPage.waitForPage();
   });
 
   test("should display the products page", async ({ page }) => {
     await expect(page).toHaveURL(/inventory/);
-    await expect(page.locator(".title")).toBeVisible();
-    await expect(page.locator(".title")).toHaveText("Products");
+    await expect(inventoryPage.title).toBeVisible();
+    await expect(inventoryPage.title).toHaveText("Products");
   });
 
-  test("should display 6 products", async ({ page }) => {
-    const items = page.locator(".inventory_item");
-    await expect(items).toHaveCount(6);
+  test("should display 6 products", async () => {
+    await expect(inventoryPage.inventoryItems).toHaveCount(6);
   });
 
-  test("should add item to cart and update cart badge", async ({ page }) => {
-    await page.waitForSelector(".inventory_item");
-    await page.locator(".btn_inventory").first().click();
-    const cartBadge = page.locator(".shopping_cart_badge");
-    await expect(cartBadge).toBeVisible();
-    await expect(cartBadge).toHaveText("1");
+  test("should add item to cart and update cart badge", async () => {
+    await inventoryPage.page.waitForSelector(".inventory_item");
+    await inventoryPage.addToCartButtons.first().click();
+    await expect(inventoryPage.cartBadge).toBeVisible();
+    await expect(inventoryPage.cartBadge).toHaveText("1");
   });
 });
