@@ -2,6 +2,8 @@
 
 Playwright test automation suite targeting [Sauce Demo](https://www.saucedemo.com). Built as part of a structured QA skill-build to practice automation patterns I'd use on the job.
 
+![Playwright](https://img.shields.io/badge/Playwright-1.59-green)
+
 ## Tech Stack
 
 - Playwright
@@ -12,19 +14,20 @@ Playwright test automation suite targeting [Sauce Demo](https://www.saucedemo.co
 
 ```
 playwright-automation/
-├── tests/
-│   ├── login.spec.js       # Login tests
-│   └── inventory.spec.js   # Product page tests
-└── pages/
-├── LoginPage.js         # Page Object Model for login
-└── InventoryPage.js     # Page Object Model for inventory
+├── pages/
+│   ├── LoginPage.js          # Login form selectors and actions
+│   └── InventoryPage.js      # Product listing selectors and actions
+└── tests/
+    ├── login.spec.js         # Auth tests: login, error states, logout
+    └── inventory.spec.js     # Inventory tests: page display, cart interactions
 ```
 
 ## Key Concepts Demonstrated
 
-- **Page Object Model** — selectors and actions abstracted into page classes
-- **Assertions + Waits** — web-first assertions with auto-waiting
+- **Page Object Model** — selectors and actions abstracted into `LoginPage.js` and `InventoryPage.js`
+- **Assertions + Waits** — web-first assertions with Playwright's built-in auto-waiting
 - **Environment Variables** — credentials stored in `.env`, never hardcoded
+- **Cross-spec POM reuse** — same page classes shared across multiple test files
 
 ## Running Tests
 
@@ -45,11 +48,3 @@ Run a single spec:
 ```bash
 npx playwright test tests/login.spec.js
 ```
-
-## In Progress
-
-Part of an active 8-week QA skill-build. Upcoming additions:
-
-- CI/CD pipeline with GitHub Actions
-- Docker containerization
-- Python + Playwright test suite
